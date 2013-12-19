@@ -1,0 +1,17 @@
+{
+  "uuid": "8cdf7c36-781c-430e-a1e1-b47bf3faa09e",
+  "shortName": "WordClock",
+  "longName": "WordClock",
+  "companyName": "Travis La Marr",
+  "versionCode": 1,
+  "versionLabel": "0.0.0",
+  "watchapp": {
+    "watchface": true
+  },
+  "appKeys": {
+    "dummy": 0
+  },
+  "resources": {
+    "media": []
+  }
+}
