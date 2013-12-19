@@ -4,6 +4,7 @@ static Window *window;
 static TextLayer *text_layer;
 
 static const char* _ITIS = "it is";
+
 //hours
 static const char* _HONE = "one";
 static const char* _HTWO = "two";
@@ -29,11 +30,16 @@ static const char* _MHALF = "half";
 //misc
 static const char* _PAST = "past";
 static const char* _TO = "to";
+static const char* _BLANK = "";
 static const char* _OCLOCK = "o'clock";
+static const char* _AM = "AM";
+static const char* _PM = "PM";
 
 const char* tminute = NULL;
 const char* thour = NULL;
-const char* tense = NULL;
+int tense = 0;
+int minutebubble = 0;
+int timeofday = 0;
 
 static void window_load(Window *window) {
 }
@@ -47,11 +53,13 @@ static void deinit(void) {
 }
 
 
-static void test(struct tm* t) {
+static void time2text(struct tm* t) {
   int hour = t->tm_hour % 12;
   int minute = t->tm_min;
 
-  if (minute >= 5 && minute <= 9) {
+  if (minute >= 0 && minute <= 4) {
+    tminute = _OCLOCK;
+  } else if (minute >= 5 && minute <= 9) {
     tminute = _MFIVE;
   } else if (minute >= 10 && minute <= 14) {
     tminute = _MTEN;
@@ -80,16 +88,12 @@ static void test(struct tm* t) {
     hour=hour+1;
   }
   
-  // if (minute == 0) {
-  //   APP_LOG(APP_LOG_LEVEL_DEBUG, "%s",  _OCLOCK);
-  // } else {
-
-  // }
-
-  if (minute >= 1 && minute <= 34) {
-    tense = _PAST;
+  if (minute >=0 && minute <= 4) {
+    tense = 0;
+  } else if (minute >= 5 && minute <= 34) {
+    tense = 1;
   } else {
-    tense = _TO;
+    tense = 2;
   }
 
   if (hour == 1) {
@@ -114,28 +118,35 @@ static void test(struct tm* t) {
     thour = _HTEN;
   } else if (hour == 11) {
     thour = _HELEVEN;
-  } else if (hour == 12) {
+  } else {
     thour = _HTWELVE;
   }
 
-  APP_LOG(APP_LOG_LEVEL_DEBUG, "%s %s %s %s", _ITIS, tminute, tense, thour );
+  if (t->tm_hour >= 0 && t->tm_hour <=11) {
+    timeofday = 1;
+  } else {
+    timeofday = 2;
+  }
 
   if (minute % 10 == 0 || minute % 10 == 5) {
-    APP_LOG(APP_LOG_LEVEL_DEBUG, "x x x x");
+    minutebubble = 0;
   } else if (minute % 10 == 1 || minute % 10 == 6) {
-    APP_LOG(APP_LOG_LEVEL_DEBUG, "o x x x");
+    minutebubble = 1;
   } else if (minute % 10 == 2 || minute % 10 == 7) {
-    APP_LOG(APP_LOG_LEVEL_DEBUG, "o o x x");
+    minutebubble = 2;
   } else if (minute % 10 == 3 || minute % 10 == 8) {
-    APP_LOG(APP_LOG_LEVEL_DEBUG, "o o o x");
+    minutebubble = 3;
   } else if (minute % 10 == 4 || minute % 10 == 9) {
-    APP_LOG(APP_LOG_LEVEL_DEBUG, "o o o o");
+    minutebubble = 4;
   }
+
+  //return shit.
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "Debug: struct: %i hour: %i thour: %s minute: %i", t->tm_hour, hour, thour, minute);
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "Debug: %s text minute: %s text hour: %s tense: %i minutes: %i timeofday: %i", _ITIS, tminute, thour, tense, minutebubble, timeofday);
 }
 
 static void handle_tick(struct tm *tick_time, TimeUnits units_changed) {
-  test(tick_time);
-
+  time2text(tick_time);
 }
 
 static void init(void) {
