@@ -1,7 +1,11 @@
 #include <pebble.h>
 
 static Window *window;
-static TextLayer *text_layer;
+static TextLayer *its_text_layer;
+static TextLayer *min_text_layer;
+static TextLayer *tense_text_layer;
+static TextLayer *hour_text_layer;
+static TextLayer *minutebubble_text_layer;
 
 static const char* _ITIS = "it is";
 
@@ -45,13 +49,93 @@ static void window_load(Window *window) {
 }
 
 static void window_unload(Window *window) {
-  text_layer_destroy(text_layer);
+  text_layer_destroy(min_text_layer);
 }
 
 static void deinit(void) {
   window_destroy(window);
 }
 
+static void render_screen(void) {
+  Layer *window_layer = window_get_root_layer(window);
+
+  GRect bounds = layer_get_frame(window_layer);
+
+  its_text_layer = text_layer_create((GRect){ .origin = { 0, 0 }, .size = bounds.size });
+  text_layer_set_font(its_text_layer, fonts_get_system_font(FONT_KEY_GOTHIC_24));
+  text_layer_set_text_color(its_text_layer, GColorWhite);
+  text_layer_set_background_color(its_text_layer, GColorClear);
+  text_layer_set_text_alignment(its_text_layer, GTextAlignmentLeft);
+  layer_add_child(window_layer, text_layer_get_layer(its_text_layer));
+
+  min_text_layer = text_layer_create((GRect){ .origin = { 0, 20 }, .size = bounds.size });
+  text_layer_set_font(min_text_layer, fonts_get_system_font(FONT_KEY_GOTHIC_24));
+  text_layer_set_text_color(min_text_layer, GColorWhite);
+  text_layer_set_background_color(min_text_layer, GColorClear);
+  text_layer_set_text_alignment(min_text_layer, GTextAlignmentLeft);
+  layer_add_child(window_layer, text_layer_get_layer(min_text_layer));
+  
+  tense_text_layer = text_layer_create((GRect){ .origin = { 0, 40 }, .size = bounds.size });
+  text_layer_set_font(tense_text_layer, fonts_get_system_font(FONT_KEY_GOTHIC_24));
+  text_layer_set_text_color(tense_text_layer, GColorWhite);
+  text_layer_set_background_color(tense_text_layer, GColorClear);
+  text_layer_set_text_alignment(tense_text_layer, GTextAlignmentLeft);
+  layer_add_child(window_layer, text_layer_get_layer(tense_text_layer));
+      
+  hour_text_layer = text_layer_create((GRect){ .origin = { 0, 60 }, .size = bounds.size });
+  text_layer_set_font(hour_text_layer, fonts_get_system_font(FONT_KEY_GOTHIC_24));
+  text_layer_set_text_color(hour_text_layer, GColorWhite);
+  text_layer_set_background_color(hour_text_layer, GColorClear);
+  text_layer_set_text_alignment(hour_text_layer, GTextAlignmentLeft);
+  layer_add_child(window_layer, text_layer_get_layer(hour_text_layer));
+
+  minutebubble_text_layer = text_layer_create((GRect){ .origin = { 0, 80 }, .size = bounds.size });
+  text_layer_set_font(minutebubble_text_layer, fonts_get_system_font(FONT_KEY_GOTHIC_24));
+  text_layer_set_text_color(minutebubble_text_layer, GColorWhite);
+  text_layer_set_background_color(minutebubble_text_layer, GColorClear);
+  text_layer_set_text_alignment(minutebubble_text_layer, GTextAlignmentLeft);
+  layer_add_child(window_layer, text_layer_get_layer(minutebubble_text_layer));
+
+}
+
+static void update_text(const char* t_minute, const char* t_hour, int t_tense, int t_minutes, int t_timeofday) {
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "Debug: %s text minute: %s text hour: %s tense: %i minutes: %i timeofday: %i", _ITIS, t_minute, t_hour, t_tense, t_minutes, t_timeofday);
+  text_layer_set_text(its_text_layer, _ITIS);
+
+  text_layer_set_text(min_text_layer, t_minute);
+
+    switch(t_tense) {
+    case 0:
+      text_layer_destroy(tense_text_layer);
+    break;
+    case 1:
+      text_layer_set_text(tense_text_layer, _PAST);
+    break;
+    case 2:
+      text_layer_set_text(tense_text_layer, _TO);
+    break;
+  }
+
+  text_layer_set_text(hour_text_layer, t_hour);
+
+    switch(t_minutes) {
+    case 0:
+      text_layer_set_text(minutebubble_text_layer, "x x x x");
+      break;
+    case 1:
+      text_layer_set_text(minutebubble_text_layer, "o x x x");
+      break;
+    case 2:
+      text_layer_set_text(minutebubble_text_layer, "o o x x");
+      break;
+    case 3:
+      text_layer_set_text(minutebubble_text_layer, "o o o x");
+      break;
+    case 4:
+      text_layer_set_text(minutebubble_text_layer, "o o o o");
+      break;
+  }
+}
 
 static void time2text(struct tm* t) {
   int hour = t->tm_hour % 12;
@@ -141,9 +225,12 @@ static void time2text(struct tm* t) {
   }
 
   //return shit.
-  APP_LOG(APP_LOG_LEVEL_DEBUG, "Debug: struct: %i hour: %i thour: %s minute: %i", t->tm_hour, hour, thour, minute);
-  APP_LOG(APP_LOG_LEVEL_DEBUG, "Debug: %s text minute: %s text hour: %s tense: %i minutes: %i timeofday: %i", _ITIS, tminute, thour, tense, minutebubble, timeofday);
+  // APP_LOG(APP_LOG_LEVEL_DEBUG, "Debug: struct: %i hour: %i thour: %s minute: %i", t->tm_hour, hour, thour, minute);
+  // APP_LOG(APP_LOG_LEVEL_DEBUG, "Debug: %s text minute: %s text hour: %s tense: %i minutes: %i timeofday: %i", _ITIS, tminute, thour, tense, minutebubble, timeofday);
+  update_text(tminute, thour, tense, minutebubble, timeofday);
 }
+
+
 
 static void handle_tick(struct tm *tick_time, TimeUnits units_changed) {
   time2text(tick_time);
@@ -151,8 +238,10 @@ static void handle_tick(struct tm *tick_time, TimeUnits units_changed) {
 
 static void init(void) {
   window = window_create();
-  const bool animated = true;
-  window_stack_push(window, animated);
+  window_stack_push(window, true);
+  window_set_background_color(window, GColorBlack);
+  render_screen(); //init screen
+
   tick_timer_service_subscribe(MINUTE_UNIT, &handle_tick  );
 }
 
