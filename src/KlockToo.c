@@ -521,6 +521,8 @@ static void minute2text(struct tm* t) {
       text_layer_set_text_color(twenty_text_layer, GColorWhite);
       text_layer_set_background_color(twenty_text_layer, GColorBlack);
     } else if (minute >= 45 && minute <= 49) {
+      text_layer_set_text_color(a_text_layer, GColorWhite);
+      text_layer_set_background_color(a_text_layer, GColorBlack);
       text_layer_set_text_color(quarter_text_layer, GColorWhite);
       text_layer_set_background_color(quarter_text_layer, GColorBlack);
     } else if (minute >= 50 && minute <= 54) {
