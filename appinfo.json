@@ -1,17 +1,28 @@
 {
-  "uuid": "8cdf7c36-781c-430e-a1e1-b47bf3faa09e",
-  "shortName": "WordClock",
-  "longName": "WordClock",
-  "companyName": "Travis La Marr",
-  "versionCode": 1,
-  "versionLabel": "0.0.0",
-  "watchapp": {
-    "watchface": true
-  },
-  "appKeys": {
-    "dummy": 0
-  },
-  "resources": {
-    "media": []
-  }
+    "uuid": "8cdf7c36-781c-430e-a1e1-b47bf3faa09e",
+    "shortName": "KlockToo",
+    "longName": "KlockToo",
+    "companyName": "Travis La Marr",
+    "versionCode": 1,
+    "versionLabel": "0.1.0",
+    "watchapp": {
+        "watchface": true
+    },
+    "appKeys": {
+        "dummy": 0
+    },
+    "resources": {
+        "media": [
+            {
+                "type": "font",
+                "name": "FONT_PIXEL_12",
+                "file": "fonts/pixelmix.ttf"
+            },
+            {
+                "type": "font",
+                "name": "FONT_PIXEL_7",
+                "file": "fonts/pixelmix.ttf"
+            }
+        ]
+    }
 }
