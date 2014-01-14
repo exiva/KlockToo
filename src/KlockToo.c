@@ -1,8 +1,10 @@
 #include <pebble.h>
 
 static Window *window;
-static Layer *display_layer;
+static Layer *grid_layer;
+static Layer *brand_layer;
 static Layer *window_layer;
+static Layer *precision_layer;
 
 static TextLayer *it_text_layer;
 static TextLayer *is_text_layer;
@@ -29,13 +31,9 @@ static TextLayer *past_text_layer;
 static TextLayer *twenty_text_layer;
 static TextLayer *mfive_text_layer;
 static TextLayer *random_text_layer;
-static TextLayer *min_text_layer;
-static TextLayer *tense_text_layer;
-static TextLayer *hour_text_layer;
-static TextLayer *minutebubble_text_layer;
 static TextLayer *oclock_text_layer;
 
-static TextLayer *bubble_text_layer;
+static TextLayer *brand_text;
 
 static const char* _IT = "I T";
 static const char* _IS = "I S";
@@ -78,6 +76,33 @@ static void deinit(void) {
   window_destroy(window);
 }
 
+void draw_minute(GContext* ctx, struct tm *t) {
+  int minute = t->tm_min;
+
+  graphics_context_set_fill_color(ctx, GColorBlack);
+  graphics_draw_circle(ctx, GPoint(10, 148), 5);
+  graphics_draw_circle(ctx, GPoint(25, 148), 5);
+  graphics_draw_circle(ctx, GPoint(40, 148), 5);
+  graphics_draw_circle(ctx, GPoint(55, 148), 5);
+
+  if (minute % 10 == 1 || minute % 10 == 6) {
+    graphics_fill_circle(ctx, GPoint(10, 148), 4);
+  } else if (minute % 10 == 2 || minute % 10 == 7) {
+    graphics_fill_circle(ctx, GPoint(10, 148), 4);
+    graphics_fill_circle(ctx, GPoint(25, 148), 4);
+  } else if (minute % 10 == 3 || minute % 10 == 8) {
+    graphics_fill_circle(ctx, GPoint(10, 148), 4);
+    graphics_fill_circle(ctx, GPoint(25, 148), 4);
+    graphics_fill_circle(ctx, GPoint(40, 148), 4);
+  } else if (minute % 10 == 4 || minute % 10 == 9) {
+    graphics_fill_circle(ctx, GPoint(10, 148), 4);
+    graphics_fill_circle(ctx, GPoint(25, 148), 4);
+    graphics_fill_circle(ctx, GPoint(40, 148), 4);
+    graphics_fill_circle(ctx, GPoint(55, 148), 4);
+  }
+}
+
+
 void draw_grid() {
   // Line One
   it_text_layer = text_layer_create((GRect){ .origin = { lineleft, 1 }, .size = {22, lineheight} });
@@ -86,7 +111,7 @@ void draw_grid() {
   text_layer_set_text_color(it_text_layer, GColorWhite);
   text_layer_set_background_color(it_text_layer, GColorBlack);
   text_layer_set_text_alignment(it_text_layer, GTextAlignmentLeft);
-  layer_add_child(display_layer, text_layer_get_layer(it_text_layer));
+  layer_add_child(grid_layer, text_layer_get_layer(it_text_layer));
 
   random_text_layer = text_layer_create((GRect){ .origin = { 27+5, 1 }, .size = {9, lineheight} });
   text_layer_set_text(random_text_layer, "L");
@@ -94,7 +119,7 @@ void draw_grid() {
   text_layer_set_text_color(random_text_layer, GColorBlack);
   text_layer_set_background_color(random_text_layer, GColorWhite);
   text_layer_set_text_alignment(random_text_layer, GTextAlignmentLeft);
-  layer_add_child(display_layer, text_layer_get_layer(random_text_layer));
+  layer_add_child(grid_layer, text_layer_get_layer(random_text_layer));
 
   is_text_layer = text_layer_create((GRect){ .origin = { 39+5, 1 }, .size = {22, lineheight} });
   text_layer_set_text(is_text_layer, _IS);
@@ -102,7 +127,7 @@ void draw_grid() {
   text_layer_set_text_color(is_text_layer, GColorWhite);
   text_layer_set_background_color(is_text_layer, GColorBlack);
   text_layer_set_text_alignment(is_text_layer, GTextAlignmentLeft);
-  layer_add_child(display_layer, text_layer_get_layer(is_text_layer));
+  layer_add_child(grid_layer, text_layer_get_layer(is_text_layer));
 
   random_text_layer = text_layer_create((GRect){ .origin = { 63+5, 1 }, .size = {22, lineheight} });
   text_layer_set_text(random_text_layer, "A S");
@@ -110,7 +135,7 @@ void draw_grid() {
   text_layer_set_text_color(random_text_layer, GColorBlack);
   text_layer_set_background_color(random_text_layer, GColorWhite);
   text_layer_set_text_alignment(random_text_layer, GTextAlignmentLeft);
-  layer_add_child(display_layer, text_layer_get_layer(random_text_layer));
+  layer_add_child(grid_layer, text_layer_get_layer(random_text_layer));
 
   am_text_layer = text_layer_create((GRect){ .origin = { 87+5, 1 }, .size = {22, lineheight} });
   text_layer_set_text(am_text_layer, _AM);
@@ -118,7 +143,7 @@ void draw_grid() {
   text_layer_set_text_color(am_text_layer, GColorBlack);
   text_layer_set_background_color(am_text_layer, GColorWhite);
   text_layer_set_text_alignment(am_text_layer, GTextAlignmentLeft);
-  layer_add_child(display_layer, text_layer_get_layer(am_text_layer));
+  layer_add_child(grid_layer, text_layer_get_layer(am_text_layer));
 
   pm_text_layer = text_layer_create((GRect){ .origin = { 111+5, 1 }, .size = {22, lineheight} });
   text_layer_set_text(pm_text_layer, _PM);
@@ -126,7 +151,7 @@ void draw_grid() {
   text_layer_set_text_color(pm_text_layer, GColorBlack);
   text_layer_set_background_color(pm_text_layer, GColorWhite);
   text_layer_set_text_alignment(pm_text_layer, GTextAlignmentLeft);
-  layer_add_child(display_layer, text_layer_get_layer(pm_text_layer));
+  layer_add_child(grid_layer, text_layer_get_layer(pm_text_layer));
 
   // Line 2
   a_text_layer = text_layer_create((GRect){ .origin = { lineleft, lineheight }, .size = {9, lineheight} });
@@ -135,7 +160,7 @@ void draw_grid() {
   text_layer_set_text_color(a_text_layer, GColorBlack);
   text_layer_set_background_color(a_text_layer, GColorWhite);
   text_layer_set_text_alignment(a_text_layer, GTextAlignmentLeft);
-  layer_add_child(display_layer, text_layer_get_layer(a_text_layer));
+  layer_add_child(grid_layer, text_layer_get_layer(a_text_layer));
 
   random_text_layer = text_layer_create((GRect){ .origin = { 15+5, lineheight }, .size = {9, lineheight} });
   text_layer_set_text(random_text_layer, "C");
@@ -143,7 +168,7 @@ void draw_grid() {
   text_layer_set_text_color(random_text_layer, GColorBlack);
   text_layer_set_background_color(random_text_layer, GColorWhite);
   text_layer_set_text_alignment(random_text_layer, GTextAlignmentLeft);
-  layer_add_child(display_layer, text_layer_get_layer(random_text_layer));
+  layer_add_child(grid_layer, text_layer_get_layer(random_text_layer));
 
   quarter_text_layer = text_layer_create((GRect){ .origin = { 27+5, lineheight }, .size = {87, lineheight} });
   text_layer_set_text(quarter_text_layer, _MQUARTER);
@@ -151,7 +176,7 @@ void draw_grid() {
   text_layer_set_text_color(quarter_text_layer, GColorBlack);
   text_layer_set_background_color(quarter_text_layer, GColorWhite);
   text_layer_set_text_alignment(quarter_text_layer, GTextAlignmentLeft);
-  layer_add_child(display_layer, text_layer_get_layer(quarter_text_layer));
+  layer_add_child(grid_layer, text_layer_get_layer(quarter_text_layer));
 
   random_text_layer = text_layer_create((GRect){ .origin = { 111+5, lineheight }, .size = {22, lineheight} });
   text_layer_set_text(random_text_layer, "D C");
@@ -159,7 +184,7 @@ void draw_grid() {
   text_layer_set_text_color(random_text_layer, GColorBlack);
   text_layer_set_background_color(random_text_layer, GColorWhite);
   text_layer_set_text_alignment(random_text_layer, GTextAlignmentLeft);
-  layer_add_child(display_layer, text_layer_get_layer(random_text_layer));
+  layer_add_child(grid_layer, text_layer_get_layer(random_text_layer));
 
   // Line 3
   twenty_text_layer = text_layer_create((GRect){ .origin = { lineleft, lineheight*2 }, .size = {74, lineheight} });
@@ -168,7 +193,7 @@ void draw_grid() {
   text_layer_set_text_color(twenty_text_layer, GColorBlack);
   text_layer_set_background_color(twenty_text_layer, GColorWhite);
   text_layer_set_text_alignment(twenty_text_layer, GTextAlignmentLeft);
-  layer_add_child(display_layer, text_layer_get_layer(twenty_text_layer));
+  layer_add_child(grid_layer, text_layer_get_layer(twenty_text_layer));
 
   mfive_text_layer = text_layer_create((GRect){ .origin = { 75+5, lineheight*2 }, .size = {48, lineheight} });
   text_layer_set_text(mfive_text_layer, _MFIVE);
@@ -176,7 +201,7 @@ void draw_grid() {
   text_layer_set_text_color(mfive_text_layer, GColorBlack);
   text_layer_set_background_color(mfive_text_layer, GColorWhite);
   text_layer_set_text_alignment(mfive_text_layer, GTextAlignmentLeft);
-  layer_add_child(display_layer, text_layer_get_layer(mfive_text_layer));
+  layer_add_child(grid_layer, text_layer_get_layer(mfive_text_layer));
 
   random_text_layer = text_layer_create((GRect){ .origin = { 123+5, lineheight*2 }, .size = {9, lineheight} });
   text_layer_set_text(random_text_layer, "X");
@@ -184,7 +209,7 @@ void draw_grid() {
   text_layer_set_text_color(random_text_layer, GColorBlack);
   text_layer_set_background_color(random_text_layer, GColorWhite);
   text_layer_set_text_alignment(random_text_layer, GTextAlignmentLeft);
-  layer_add_child(display_layer, text_layer_get_layer(random_text_layer));
+  layer_add_child(grid_layer, text_layer_get_layer(random_text_layer));
 
   // Line 4
   half_text_layer = text_layer_create((GRect){ .origin = { lineleft, lineheight*3 }, .size = {48, lineheight} });
@@ -193,7 +218,7 @@ void draw_grid() {
   text_layer_set_text_color(half_text_layer, GColorBlack);
   text_layer_set_background_color(half_text_layer, GColorWhite);
   text_layer_set_text_alignment(half_text_layer, GTextAlignmentLeft);
-  layer_add_child(display_layer, text_layer_get_layer(half_text_layer));
+  layer_add_child(grid_layer, text_layer_get_layer(half_text_layer));
 
   random_text_layer = text_layer_create((GRect){ .origin = { 51+5, lineheight*3 }, .size = {9, lineheight} });
   text_layer_set_text(random_text_layer, "B");
@@ -201,7 +226,7 @@ void draw_grid() {
   text_layer_set_text_color(random_text_layer, GColorBlack);
   text_layer_set_background_color(random_text_layer, GColorWhite);
   text_layer_set_text_alignment(random_text_layer, GTextAlignmentLeft);
-  layer_add_child(display_layer, text_layer_get_layer(random_text_layer));
+  layer_add_child(grid_layer, text_layer_get_layer(random_text_layer));
 
   mten_text_layer = text_layer_create((GRect){ .origin = { 63+5, lineheight*3 }, .size = {35, lineheight} });
   text_layer_set_text(mten_text_layer, _MTEN);
@@ -209,7 +234,7 @@ void draw_grid() {
   text_layer_set_text_color(mten_text_layer, GColorBlack);
   text_layer_set_background_color(mten_text_layer, GColorWhite);
   text_layer_set_text_alignment(mten_text_layer, GTextAlignmentLeft);
-  layer_add_child(display_layer, text_layer_get_layer(mten_text_layer));
+  layer_add_child(grid_layer, text_layer_get_layer(mten_text_layer));
 
   random_text_layer = text_layer_create((GRect){ .origin = { 100+5, lineheight*3 }, .size = {9, lineheight} });
   text_layer_set_text(random_text_layer, "F");
@@ -217,7 +242,7 @@ void draw_grid() {
   text_layer_set_text_color(random_text_layer, GColorBlack);
   text_layer_set_background_color(random_text_layer, GColorWhite);
   text_layer_set_text_alignment(random_text_layer, GTextAlignmentLeft);
-  layer_add_child(display_layer, text_layer_get_layer(random_text_layer));
+  layer_add_child(grid_layer, text_layer_get_layer(random_text_layer));
 
   to_text_layer = text_layer_create((GRect){ .origin = { 111+5, lineheight*3 }, .size = {22, lineheight} });
   text_layer_set_text(to_text_layer, _TO);
@@ -225,7 +250,7 @@ void draw_grid() {
   text_layer_set_text_color(to_text_layer, GColorBlack);
   text_layer_set_background_color(to_text_layer, GColorWhite);
   text_layer_set_text_alignment(to_text_layer, GTextAlignmentLeft);
-  layer_add_child(display_layer, text_layer_get_layer(to_text_layer));
+  layer_add_child(grid_layer, text_layer_get_layer(to_text_layer));
 
   // Line 5
   past_text_layer = text_layer_create((GRect){ .origin = { lineleft, lineheight*4 }, .size = {48, lineheight} });
@@ -234,7 +259,7 @@ void draw_grid() {
   text_layer_set_text_color(past_text_layer, GColorBlack);
   text_layer_set_background_color(past_text_layer, GColorWhite);
   text_layer_set_text_alignment(past_text_layer, GTextAlignmentLeft);
-  layer_add_child(display_layer, text_layer_get_layer(past_text_layer));
+  layer_add_child(grid_layer, text_layer_get_layer(past_text_layer));
 
   random_text_layer = text_layer_create((GRect){ .origin = { 51+5, lineheight*4 }, .size = {35, lineheight} });
   text_layer_set_text(random_text_layer, "E R U");
@@ -242,7 +267,7 @@ void draw_grid() {
   text_layer_set_text_color(random_text_layer, GColorBlack);
   text_layer_set_background_color(random_text_layer, GColorWhite);
   text_layer_set_text_alignment(random_text_layer, GTextAlignmentLeft);
-  layer_add_child(display_layer, text_layer_get_layer(random_text_layer));
+  layer_add_child(grid_layer, text_layer_get_layer(random_text_layer));
 
   hnine_text_layer = text_layer_create((GRect){ .origin = { 87+5, lineheight*4 }, .size = {48, lineheight} });
   text_layer_set_text(hnine_text_layer, _HNINE);
@@ -250,7 +275,7 @@ void draw_grid() {
   text_layer_set_text_color(hnine_text_layer, GColorBlack);
   text_layer_set_background_color(hnine_text_layer, GColorWhite);
   text_layer_set_text_alignment(hnine_text_layer, GTextAlignmentLeft);
-  layer_add_child(display_layer, text_layer_get_layer(hnine_text_layer));
+  layer_add_child(grid_layer, text_layer_get_layer(hnine_text_layer));
 
   // Line 6
   hone_text_layer = text_layer_create((GRect){ .origin = { lineleft, lineheight*5 }, .size = {35, lineheight} });
@@ -259,7 +284,7 @@ void draw_grid() {
   text_layer_set_text_color(hone_text_layer, GColorBlack);
   text_layer_set_background_color(hone_text_layer, GColorWhite);
   text_layer_set_text_alignment(hone_text_layer, GTextAlignmentLeft);
-  layer_add_child(display_layer, text_layer_get_layer(hone_text_layer));
+  layer_add_child(grid_layer, text_layer_get_layer(hone_text_layer));
 
   hsix_text_layer = text_layer_create((GRect){ .origin = { 39+5, lineheight*5 }, .size = {35, lineheight} });
   text_layer_set_text(hsix_text_layer, _HSIX);
@@ -267,7 +292,7 @@ void draw_grid() {
   text_layer_set_text_color(hsix_text_layer, GColorBlack);
   text_layer_set_background_color(hsix_text_layer, GColorWhite);
   text_layer_set_text_alignment(hsix_text_layer, GTextAlignmentLeft);
-  layer_add_child(display_layer, text_layer_get_layer(hsix_text_layer));
+  layer_add_child(grid_layer, text_layer_get_layer(hsix_text_layer));
 
   hthree_text_layer = text_layer_create((GRect){ .origin = { 75+5, lineheight*5 }, .size = {61, lineheight} });
   text_layer_set_text(hthree_text_layer, _HTHREE);
@@ -275,7 +300,7 @@ void draw_grid() {
   text_layer_set_text_color(hthree_text_layer, GColorBlack);
   text_layer_set_background_color(hthree_text_layer, GColorWhite);
   text_layer_set_text_alignment(hthree_text_layer, GTextAlignmentLeft);
-  layer_add_child(display_layer, text_layer_get_layer(hthree_text_layer));
+  layer_add_child(grid_layer, text_layer_get_layer(hthree_text_layer));
 
   // Line 7
   hfour_text_layer = text_layer_create((GRect){ .origin = { lineleft, lineheight*6 }, .size = {57, lineheight} });
@@ -284,7 +309,7 @@ void draw_grid() {
   text_layer_set_text_color(hfour_text_layer, GColorBlack);
   text_layer_set_background_color(hfour_text_layer, GColorWhite);
   text_layer_set_text_alignment(hfour_text_layer, GTextAlignmentLeft);
-  layer_add_child(display_layer, text_layer_get_layer(hfour_text_layer));
+  layer_add_child(grid_layer, text_layer_get_layer(hfour_text_layer));
 
   hfive_text_layer = text_layer_create((GRect){ .origin = { 51+5, lineheight*6 }, .size = {57, lineheight} });
   text_layer_set_text(hfive_text_layer, _HFIVE);
@@ -292,7 +317,7 @@ void draw_grid() {
   text_layer_set_text_color(hfive_text_layer, GColorBlack);
   text_layer_set_background_color(hfive_text_layer, GColorWhite);
   text_layer_set_text_alignment(hfive_text_layer, GTextAlignmentLeft);
-  layer_add_child(display_layer, text_layer_get_layer(hfive_text_layer));
+  layer_add_child(grid_layer, text_layer_get_layer(hfive_text_layer));
 
   htwo_text_layer = text_layer_create((GRect){ .origin = { 99+5, lineheight*6 }, .size = {35, lineheight} });
   text_layer_set_text(htwo_text_layer, _HTWO);
@@ -300,7 +325,7 @@ void draw_grid() {
   text_layer_set_text_color(htwo_text_layer, GColorBlack);
   text_layer_set_background_color(htwo_text_layer, GColorWhite);
   text_layer_set_text_alignment(htwo_text_layer, GTextAlignmentLeft);
-  layer_add_child(display_layer, text_layer_get_layer(htwo_text_layer));
+  layer_add_child(grid_layer, text_layer_get_layer(htwo_text_layer));
 
   // Line 8
   height_text_layer = text_layer_create((GRect){ .origin = { lineleft, lineheight*7 }, .size = {61, lineheight} });
@@ -309,7 +334,7 @@ void draw_grid() {
   text_layer_set_text_color(height_text_layer, GColorBlack);
   text_layer_set_background_color(height_text_layer, GColorWhite);
   text_layer_set_text_alignment(height_text_layer, GTextAlignmentLeft);
-  layer_add_child(display_layer, text_layer_get_layer(height_text_layer));
+  layer_add_child(grid_layer, text_layer_get_layer(height_text_layer));
 
   heleven_text_layer = text_layer_create((GRect){ .origin = { 63+5, lineheight*7 }, .size = {74, lineheight} });
   text_layer_set_text(heleven_text_layer, _HELEVEN);
@@ -317,7 +342,7 @@ void draw_grid() {
   text_layer_set_text_color(heleven_text_layer, GColorBlack);
   text_layer_set_background_color(heleven_text_layer, GColorWhite);
   text_layer_set_text_alignment(heleven_text_layer, GTextAlignmentLeft);
-  layer_add_child(display_layer, text_layer_get_layer(heleven_text_layer));
+  layer_add_child(grid_layer, text_layer_get_layer(heleven_text_layer));
 
   // Line 9
   hseven_text_layer = text_layer_create((GRect){ .origin = { lineleft, lineheight*8 }, .size = {61, lineheight} });
@@ -326,7 +351,7 @@ void draw_grid() {
   text_layer_set_text_color(hseven_text_layer, GColorBlack);
   text_layer_set_background_color(hseven_text_layer, GColorWhite);
   text_layer_set_text_alignment(hseven_text_layer, GTextAlignmentLeft);
-  layer_add_child(display_layer, text_layer_get_layer(hseven_text_layer));
+  layer_add_child(grid_layer, text_layer_get_layer(hseven_text_layer));
 
   htwelve_text_layer = text_layer_create((GRect){ .origin = { 63+5, lineheight*8 }, .size = {74, lineheight} });
   text_layer_set_text(htwelve_text_layer, _HTWELVE);
@@ -334,7 +359,7 @@ void draw_grid() {
   text_layer_set_text_color(htwelve_text_layer, GColorBlack);
   text_layer_set_background_color(htwelve_text_layer, GColorWhite);
   text_layer_set_text_alignment(htwelve_text_layer, GTextAlignmentLeft);
-  layer_add_child(display_layer, text_layer_get_layer(htwelve_text_layer));
+  layer_add_child(grid_layer, text_layer_get_layer(htwelve_text_layer));
 
   // Line 10
   hten_text_layer = text_layer_create((GRect){ .origin = { lineleft, lineheight*9 }, .size = {35, lineheight} });
@@ -343,7 +368,7 @@ void draw_grid() {
   text_layer_set_text_color(hten_text_layer, GColorBlack);
   text_layer_set_background_color(hten_text_layer, GColorWhite);
   text_layer_set_text_alignment(hten_text_layer, GTextAlignmentLeft);
-  layer_add_child(display_layer, text_layer_get_layer(hten_text_layer));
+  layer_add_child(grid_layer, text_layer_get_layer(hten_text_layer));
 
   random_text_layer = text_layer_create((GRect){ .origin = { 39+5, lineheight*9 }, .size = {22, lineheight} });
   text_layer_set_text(random_text_layer, "S E");
@@ -351,7 +376,7 @@ void draw_grid() {
   text_layer_set_text_color(random_text_layer, GColorBlack);
   text_layer_set_background_color(random_text_layer, GColorWhite);
   text_layer_set_text_alignment(random_text_layer, GTextAlignmentLeft);
-  layer_add_child(display_layer, text_layer_get_layer(random_text_layer));
+  layer_add_child(grid_layer, text_layer_get_layer(random_text_layer));
 
   oclock_text_layer = text_layer_create((GRect){ .origin = { 61+5, lineheight*9 }, .size = {74, lineheight} });
   text_layer_set_text(oclock_text_layer, _OCLOCK);
@@ -359,37 +384,83 @@ void draw_grid() {
   text_layer_set_text_color(oclock_text_layer, GColorBlack);
   text_layer_set_background_color(oclock_text_layer, GColorWhite);
   text_layer_set_text_alignment(oclock_text_layer, GTextAlignmentLeft);
-  layer_add_child(display_layer, text_layer_get_layer(oclock_text_layer));
+  layer_add_child(grid_layer, text_layer_get_layer(oclock_text_layer));
+}
 
-  bubble_text_layer = text_layer_create((GRect){ .origin = { 0, 148 }, .size = {144, lineheight} });
-  text_layer_set_text(bubble_text_layer, "x x x x");
-  text_layer_set_font(bubble_text_layer, fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_PIXEL_7)));
-  text_layer_set_text_color(bubble_text_layer, GColorBlack);
-  text_layer_set_background_color(bubble_text_layer, GColorWhite);
-  text_layer_set_text_alignment(bubble_text_layer, GTextAlignmentCenter);
-  layer_add_child(display_layer, text_layer_get_layer(bubble_text_layer));
+void draw_branding() {
+  brand_text = text_layer_create((GRect){ .origin = { 0, 158 }, .size = {144, lineheight} });
+  text_layer_set_text(brand_text, "GALET&RAINURE");
+  text_layer_set_font(brand_text, fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_PIXEL_7)));
+  text_layer_set_text_color(brand_text, GColorBlack);
+  text_layer_set_background_color(brand_text, GColorWhite);
+  text_layer_set_text_alignment(brand_text, GTextAlignmentCenter);
+  layer_add_child(brand_layer, text_layer_get_layer(brand_text));
+}
 
-  random_text_layer = text_layer_create((GRect){ .origin = { 0, 158 }, .size = {144, lineheight} });
-  text_layer_set_text(random_text_layer, "GALET&RAINURE");
-  text_layer_set_font(random_text_layer, fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_PIXEL_7)));
-  text_layer_set_text_color(random_text_layer, GColorBlack);
-  text_layer_set_background_color(random_text_layer, GColorWhite);
-  text_layer_set_text_alignment(random_text_layer, GTextAlignmentCenter);
-  layer_add_child(display_layer, text_layer_get_layer(random_text_layer));
+static void reset_hour_layer(int hr) {
 
-  // graphics_context_set_fill_color(ctx, GColorBlack);
-  // graphics_draw_circle(ctx, GPoint(89, 145), 4);
-  // graphics_context_set_fill_color(ctx, GColorWhite);
-  // graphics_fill_circle(ctx, GPoint(89, 145), 3);
+    text_layer_set_text_color(hone_text_layer, GColorBlack);
+    text_layer_set_background_color(hone_text_layer, GColorWhite);
 
+    text_layer_set_text_color(htwo_text_layer, GColorBlack);
+    text_layer_set_background_color(htwo_text_layer, GColorWhite);
+
+    text_layer_set_text_color(hthree_text_layer, GColorBlack);
+    text_layer_set_background_color(hthree_text_layer, GColorWhite);
+
+    text_layer_set_text_color(hfour_text_layer, GColorBlack);
+    text_layer_set_background_color(hfour_text_layer, GColorWhite);
+
+    text_layer_set_text_color(hfive_text_layer, GColorBlack);
+    text_layer_set_background_color(hfive_text_layer, GColorWhite);
+
+    text_layer_set_text_color(hsix_text_layer, GColorBlack);
+    text_layer_set_background_color(hsix_text_layer, GColorWhite);
+
+    text_layer_set_text_color(hseven_text_layer, GColorBlack);
+    text_layer_set_background_color(hseven_text_layer, GColorWhite);
+
+    text_layer_set_text_color(height_text_layer, GColorBlack);
+    text_layer_set_background_color(height_text_layer, GColorWhite);
+
+    text_layer_set_text_color(hnine_text_layer, GColorBlack);
+    text_layer_set_background_color(hnine_text_layer, GColorWhite);
+
+    text_layer_set_text_color(hten_text_layer, GColorBlack);
+    text_layer_set_background_color(hten_text_layer, GColorWhite);
+
+    text_layer_set_text_color(heleven_text_layer, GColorBlack);
+    text_layer_set_background_color(heleven_text_layer, GColorWhite);
+
+    text_layer_set_text_color(htwelve_text_layer, GColorBlack);
+    text_layer_set_background_color(htwelve_text_layer, GColorWhite);
+}
+
+static void set_ampm(struct tm* t) {
+  int hour = t->tm_hour;
+
+  if (hour >= 00 && hour <= 11) {
+      text_layer_set_text_color(am_text_layer, GColorWhite);
+      text_layer_set_background_color(am_text_layer, GColorBlack);
+      text_layer_set_text_color(pm_text_layer, GColorBlack);
+      text_layer_set_background_color(pm_text_layer, GColorWhite);
+  } else if (hour >= 12 && hour <= 23) {
+      text_layer_set_text_color(pm_text_layer, GColorWhite);
+      text_layer_set_background_color(pm_text_layer, GColorBlack);
+      text_layer_set_text_color(am_text_layer, GColorBlack);
+      text_layer_set_background_color(am_text_layer, GColorWhite);
+  }
 }
 
 static void hour2text(struct tm* t) {
   int hour = t->tm_hour % 12;
 
-  if (t->tm_min > 35) { 
+  if (t->tm_min >= 35) { 
     hour = hour+1;
   }
+
+  layer_mark_dirty(window_layer);
+  reset_hour_layer(hour);
 
   if (hour == 1) {
     text_layer_set_text_color(hone_text_layer, GColorWhite);
@@ -427,14 +498,17 @@ static void hour2text(struct tm* t) {
   } else {
     text_layer_set_text_color(htwelve_text_layer, GColorWhite);
     text_layer_set_background_color(htwelve_text_layer, GColorBlack);
+    set_ampm(t);
   }
 }
 
 static void reset_minute_layer(int min) {
   int l_min = min-1;
-  if (l_min >= 0 && l_min <= 4) {
+  if (l_min <= 4) {
     text_layer_set_text_color(oclock_text_layer, GColorBlack);
     text_layer_set_background_color(oclock_text_layer, GColorWhite);
+    text_layer_set_text_color(mfive_text_layer, GColorBlack);
+    text_layer_set_background_color(mfive_text_layer, GColorWhite);
   } else if (l_min >= 5 && l_min <= 9) {
     text_layer_set_text_color(mfive_text_layer, GColorBlack);
     text_layer_set_background_color(mfive_text_layer, GColorWhite);
@@ -486,7 +560,6 @@ static void minute2text(struct tm* t) {
     //mark the screen dirty when it changes.
     layer_mark_dirty(window_layer);
     reset_minute_layer(minute);
-    text_layer_set_text(bubble_text_layer, "x x x x");
     if (minute >= 0 && minute <= 4) {
       text_layer_set_text_color(oclock_text_layer, GColorWhite);
       text_layer_set_background_color(oclock_text_layer, GColorBlack);
@@ -533,54 +606,38 @@ static void minute2text(struct tm* t) {
       text_layer_set_background_color(mfive_text_layer, GColorBlack);
     }
     if (minute >= 5 && minute <= 34) { // handle tense
-      text_layer_set_text_color(to_text_layer, GColorBlack);
-      text_layer_set_background_color(to_text_layer, GColorWhite);
       text_layer_set_text_color(past_text_layer, GColorWhite);
       text_layer_set_background_color(past_text_layer, GColorBlack);
+      text_layer_set_text_color(to_text_layer, GColorBlack);
+      text_layer_set_background_color(to_text_layer, GColorWhite);
     } if (minute >= 35) {
       text_layer_set_text_color(to_text_layer, GColorWhite);
       text_layer_set_background_color(to_text_layer, GColorBlack);
       text_layer_set_text_color(past_text_layer, GColorBlack);
       text_layer_set_background_color(past_text_layer, GColorWhite);
+    } else if(minute < 5) {
+      text_layer_set_text_color(to_text_layer, GColorBlack);
+      text_layer_set_background_color(to_text_layer, GColorWhite);
+      text_layer_set_text_color(past_text_layer, GColorBlack);
+      text_layer_set_background_color(past_text_layer, GColorWhite);
     }
-  } else {
-    //update the bubbles. don't mark the screen layer dirty.
-      if (minute % 10 == 0 || minute % 10 == 5) {
-      text_layer_set_text(bubble_text_layer, "x x x x");
-    } else if (minute % 10 == 1 || minute % 10 == 6) {
-      text_layer_set_text(bubble_text_layer, "o x x x");
-    } else if (minute % 10 == 2 || minute % 10 == 7) {
-      text_layer_set_text(bubble_text_layer, "o o x x");
-    } else if (minute % 10 == 3 || minute % 10 == 8) {
-      text_layer_set_text(bubble_text_layer, "o o o x");
-    } else if (minute % 10 == 4 || minute % 10 == 9) {
-      text_layer_set_text(bubble_text_layer, "o o o o");
+    if (minute == 35) { //hour changes on 35 past. Save updates.
+      hour2text(t);
     }
   }
 }
-  // if (t->tm_hour >= 0 && t->tm_hour <=11) {
-  //   timeofday = 1;
-  // } else {
-  //   timeofday = 2;
-  // }
-
-
-
-// void reset_hour(void) {
-
-// }
 
 static void handle_tick(struct tm *tick_time, TimeUnits units_changed) {
-  // if (units_changed == MINUTE_UNIT) {
-  //   minute2text(tick_time);
-  // } else if (units_changed == HOUR_UNIT) {
-  //   hour2text(tick_time);
-  // }
-
-  // if (started == 0) {
+    layer_mark_dirty(precision_layer);
     minute2text(tick_time);
-    hour2text(tick_time);
-  // }
+}
+
+void minutelayer_update_callback(Layer *me, GContext* ctx) {
+  //get current time.
+  time_t now = time(NULL);
+  struct tm *tick_time = localtime(&now);
+
+  draw_minute(ctx, tick_time);
 }
 
 static void init(void) {
@@ -592,12 +649,26 @@ static void init(void) {
   //draw text grid
   window_layer = window_get_root_layer(window);
   GRect bounds = layer_get_bounds(window_layer);
-  display_layer = layer_create(bounds);
-  layer_add_child(window_layer, display_layer);
-
+  grid_layer = layer_create(bounds);
+  layer_add_child(window_layer, grid_layer);
   draw_grid();
 
+  brand_layer = layer_create(bounds);
+  layer_add_child(window_layer, brand_layer);
+  draw_branding();
+
+  precision_layer = layer_create(bounds);
+  layer_set_update_proc(precision_layer, &minutelayer_update_callback);
+  layer_add_child(window_layer, precision_layer);
+
+  //subscribe to tick and update display for first rendering
   tick_timer_service_subscribe(MINUTE_UNIT, &handle_tick);
+  time_t now = time(NULL);
+  struct tm *tick_time = localtime(&now);
+  //init the screen
+  minute2text(tick_time);
+  hour2text(tick_time);
+  set_ampm(tick_time);
 }
 
 int main(void) {
