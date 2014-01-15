@@ -90,26 +90,26 @@ static void deinit(void) {
 void draw_minute(GContext* ctx, struct tm *t) {
   int minute = t->tm_min;
 
-  graphics_draw_circle(ctx, GPoint(10, 148), 5);
-  graphics_draw_circle(ctx, GPoint(25, 148), 5);
-  graphics_draw_circle(ctx, GPoint(40, 148), 5);
-  graphics_draw_circle(ctx, GPoint(55, 148), 5);
   graphics_context_set_fill_color(ctx, FOREGROUND);
+  graphics_draw_circle(ctx, GPoint(50, 148), 5);
+  graphics_draw_circle(ctx, GPoint(63, 148), 5);
+  graphics_draw_circle(ctx, GPoint(76, 148), 5);
+  graphics_draw_circle(ctx, GPoint(89, 148), 5);
 
   if (minute % 10 == 1 || minute % 10 == 6) {
-    graphics_fill_circle(ctx, GPoint(10, 148), 4);
+    graphics_fill_circle(ctx, GPoint(50, 148), 4);
   } else if (minute % 10 == 2 || minute % 10 == 7) {
-    graphics_fill_circle(ctx, GPoint(10, 148), 4);
-    graphics_fill_circle(ctx, GPoint(25, 148), 4);
+    graphics_fill_circle(ctx, GPoint(50, 148), 4);
+    graphics_fill_circle(ctx, GPoint(63, 148), 4);
   } else if (minute % 10 == 3 || minute % 10 == 8) {
-    graphics_fill_circle(ctx, GPoint(10, 148), 4);
-    graphics_fill_circle(ctx, GPoint(25, 148), 4);
-    graphics_fill_circle(ctx, GPoint(40, 148), 4);
+    graphics_fill_circle(ctx, GPoint(50, 148), 4);
+    graphics_fill_circle(ctx, GPoint(63, 148), 4);
+    graphics_fill_circle(ctx, GPoint(76, 148), 4);
   } else if (minute % 10 == 4 || minute % 10 == 9) {
-    graphics_fill_circle(ctx, GPoint(10, 148), 4);
-    graphics_fill_circle(ctx, GPoint(25, 148), 4);
-    graphics_fill_circle(ctx, GPoint(40, 148), 4);
-    graphics_fill_circle(ctx, GPoint(55, 148), 4);
+    graphics_fill_circle(ctx, GPoint(50, 148), 4);
+    graphics_fill_circle(ctx, GPoint(63, 148), 4);
+    graphics_fill_circle(ctx, GPoint(76, 148), 4);
+    graphics_fill_circle(ctx, GPoint(89, 148), 4);
   }
 }
 
