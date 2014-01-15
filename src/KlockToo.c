@@ -181,7 +181,7 @@ void draw_grid() {
   text_layer_set_text_alignment(random_text_layer, GTextAlignmentLeft);
   layer_add_child(grid_layer, text_layer_get_layer(random_text_layer));
 
-  quarter_text_layer = text_layer_create((GRect){ .origin = { 27+5, lineheight }, .size = {87, lineheight} });
+  quarter_text_layer = text_layer_create((GRect){ .origin = { 27+5, lineheight }, .size = {82, lineheight} });
   text_layer_set_text(quarter_text_layer, _MQUARTER);
   text_layer_set_font(quarter_text_layer, fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_PIXEL_12)));
   text_layer_set_text_color(quarter_text_layer, FOREGROUND);
@@ -206,7 +206,7 @@ void draw_grid() {
   text_layer_set_text_alignment(twenty_text_layer, GTextAlignmentLeft);
   layer_add_child(grid_layer, text_layer_get_layer(twenty_text_layer));
 
-  mfive_text_layer = text_layer_create((GRect){ .origin = { 75+5, lineheight*2 }, .size = {48, lineheight} });
+  mfive_text_layer = text_layer_create((GRect){ .origin = { 75+5, lineheight*2 }, .size = {46, lineheight} });
   text_layer_set_text(mfive_text_layer, _MFIVE);
   text_layer_set_font(mfive_text_layer, fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_PIXEL_12)));
   text_layer_set_text_color(mfive_text_layer, FOREGROUND);
@@ -223,7 +223,7 @@ void draw_grid() {
   layer_add_child(grid_layer, text_layer_get_layer(random_text_layer));
 
   // Line 4
-  half_text_layer = text_layer_create((GRect){ .origin = { lineleft, lineheight*3 }, .size = {48, lineheight} });
+  half_text_layer = text_layer_create((GRect){ .origin = { lineleft, lineheight*3 }, .size = {46, lineheight} });
   text_layer_set_text(half_text_layer, _MHALF);
   text_layer_set_font(half_text_layer, fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_PIXEL_12)));
   text_layer_set_text_color(half_text_layer, FOREGROUND);
@@ -264,7 +264,7 @@ void draw_grid() {
   layer_add_child(grid_layer, text_layer_get_layer(to_text_layer));
 
   // Line 5
-  past_text_layer = text_layer_create((GRect){ .origin = { lineleft, lineheight*4 }, .size = {48, lineheight} });
+  past_text_layer = text_layer_create((GRect){ .origin = { lineleft, lineheight*4 }, .size = {46, lineheight} });
   text_layer_set_text(past_text_layer, _PAST);
   text_layer_set_font(past_text_layer, fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_PIXEL_12)));
   text_layer_set_text_color(past_text_layer, FOREGROUND);
@@ -280,7 +280,7 @@ void draw_grid() {
   text_layer_set_text_alignment(random_text_layer, GTextAlignmentLeft);
   layer_add_child(grid_layer, text_layer_get_layer(random_text_layer));
 
-  hnine_text_layer = text_layer_create((GRect){ .origin = { 87+5, lineheight*4 }, .size = {48, lineheight} });
+  hnine_text_layer = text_layer_create((GRect){ .origin = { 87+5, lineheight*4 }, .size = {46, lineheight} });
   text_layer_set_text(hnine_text_layer, _HNINE);
   text_layer_set_font(hnine_text_layer, fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_PIXEL_12)));
   text_layer_set_text_color(hnine_text_layer, FOREGROUND);
@@ -305,7 +305,7 @@ void draw_grid() {
   text_layer_set_text_alignment(hsix_text_layer, GTextAlignmentLeft);
   layer_add_child(grid_layer, text_layer_get_layer(hsix_text_layer));
 
-  hthree_text_layer = text_layer_create((GRect){ .origin = { 75+5, lineheight*5 }, .size = {61, lineheight} });
+  hthree_text_layer = text_layer_create((GRect){ .origin = { 75+5, lineheight*5 }, .size = {59, lineheight} });
   text_layer_set_text(hthree_text_layer, _HTHREE);
   text_layer_set_font(hthree_text_layer, fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_PIXEL_12)));
   text_layer_set_text_color(hthree_text_layer, FOREGROUND);
@@ -314,7 +314,7 @@ void draw_grid() {
   layer_add_child(grid_layer, text_layer_get_layer(hthree_text_layer));
 
   // Line 7
-  hfour_text_layer = text_layer_create((GRect){ .origin = { lineleft, lineheight*6 }, .size = {57, lineheight} });
+  hfour_text_layer = text_layer_create((GRect){ .origin = { lineleft, lineheight*6 }, .size = {46, lineheight} });
   text_layer_set_text(hfour_text_layer, _HFOUR);
   text_layer_set_font(hfour_text_layer, fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_PIXEL_12)));
   text_layer_set_text_color(hfour_text_layer, FOREGROUND);
@@ -322,7 +322,7 @@ void draw_grid() {
   text_layer_set_text_alignment(hfour_text_layer, GTextAlignmentLeft);
   layer_add_child(grid_layer, text_layer_get_layer(hfour_text_layer));
 
-  hfive_text_layer = text_layer_create((GRect){ .origin = { 51+5, lineheight*6 }, .size = {57, lineheight} });
+  hfive_text_layer = text_layer_create((GRect){ .origin = { 51+5, lineheight*6 }, .size = {46, lineheight} });
   text_layer_set_text(hfive_text_layer, _HFIVE);
   text_layer_set_font(hfive_text_layer, fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_PIXEL_12)));
   text_layer_set_text_color(hfive_text_layer, FOREGROUND);
@@ -339,7 +339,7 @@ void draw_grid() {
   layer_add_child(grid_layer, text_layer_get_layer(htwo_text_layer));
 
   // Line 8
-  height_text_layer = text_layer_create((GRect){ .origin = { lineleft, lineheight*7 }, .size = {61, lineheight} });
+  height_text_layer = text_layer_create((GRect){ .origin = { lineleft, lineheight*7 }, .size = {59, lineheight} });
   text_layer_set_text(height_text_layer, _HEIGHT);
   text_layer_set_font(height_text_layer, fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_PIXEL_12)));
   text_layer_set_text_color(height_text_layer, FOREGROUND);
@@ -347,7 +347,7 @@ void draw_grid() {
   text_layer_set_text_alignment(height_text_layer, GTextAlignmentLeft);
   layer_add_child(grid_layer, text_layer_get_layer(height_text_layer));
 
-  heleven_text_layer = text_layer_create((GRect){ .origin = { 63+5, lineheight*7 }, .size = {74, lineheight} });
+  heleven_text_layer = text_layer_create((GRect){ .origin = { 63+5, lineheight*7 }, .size = {72, lineheight} });
   text_layer_set_text(heleven_text_layer, _HELEVEN);
   text_layer_set_font(heleven_text_layer, fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_PIXEL_12)));
   text_layer_set_text_color(heleven_text_layer, FOREGROUND);
@@ -356,7 +356,7 @@ void draw_grid() {
   layer_add_child(grid_layer, text_layer_get_layer(heleven_text_layer));
 
   // Line 9
-  hseven_text_layer = text_layer_create((GRect){ .origin = { lineleft, lineheight*8 }, .size = {61, lineheight} });
+  hseven_text_layer = text_layer_create((GRect){ .origin = { lineleft, lineheight*8 }, .size = {59, lineheight} });
   text_layer_set_text(hseven_text_layer, _HSEVEN);
   text_layer_set_font(hseven_text_layer, fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_PIXEL_12)));
   text_layer_set_text_color(hseven_text_layer, FOREGROUND);
@@ -364,7 +364,7 @@ void draw_grid() {
   text_layer_set_text_alignment(hseven_text_layer, GTextAlignmentLeft);
   layer_add_child(grid_layer, text_layer_get_layer(hseven_text_layer));
 
-  htwelve_text_layer = text_layer_create((GRect){ .origin = { 63+5, lineheight*8 }, .size = {74, lineheight} });
+  htwelve_text_layer = text_layer_create((GRect){ .origin = { 63+5, lineheight*8 }, .size = {72, lineheight} });
   text_layer_set_text(htwelve_text_layer, _HTWELVE);
   text_layer_set_font(htwelve_text_layer, fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_PIXEL_12)));
   text_layer_set_text_color(htwelve_text_layer, FOREGROUND);
